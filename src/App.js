@@ -3,10 +3,10 @@ import React,{useState,useEffect} from 'react';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 //Import components
 import MovieList from './components/MovieList';
-import FavoriteMovie from './components/FavoriteMovie';
 import MovieHeading from './components/MovieHeading';
 import SearchBox from './components/SearchBox';
 import AddToFavorites from './components/AddToFavorites';
+import RemoveFavorites from './components/RemoveFavorites';
 
 function App() {
   const [movies,setMovies] = useState([]);
@@ -23,15 +23,35 @@ function App() {
       setMovies(jsonData.Search);
     }
   }
+  //UseEffect : get json data once the page is loaded
+      useEffect(()=>{
+        getData(searchValue);
+      },[searchValue]);
 
+      useEffect(() => {
+        const movieFavorites = JSON.parse(
+          localStorage.getItem('movie-app')
+          );
+          if(movieFavorites){
+          setFavoriteMovie(movieFavorites);
+        }
+      },[]);
+
+  //Functions of the app
+    const saveToLocalStorage = (items) => {
+      localStorage.setItem('movie-app',JSON.stringify(items));
+    }
     const addFavoriteMovie = (movie) => {
       const newFavoriteList = [...favoriteMovie, movie];
       setFavoriteMovie(newFavoriteList);
+      saveToLocalStorage(newFavoriteList);
     };
-    
-  useEffect(()=>{
-    getData(searchValue);
-  },[searchValue])
+    const removeFavorites = (movie) => {
+      const newFavoriteList = favoriteMovie.filter((favorite) => favorite.imdbID !== movie.imdbID);
+      setFavoriteMovie(newFavoriteList);
+      saveToLocalStorage(newFavoriteList);
+    }
+  
 
 
   return (
@@ -46,7 +66,7 @@ function App() {
       <div className="row d-flex align-items-center mt-4 mb-4">
         <MovieHeading heading="Favorite Movies" />
       </div>
-      <div className="row"> <MovieList movies={favoriteMovie} favoriteMovie={AddToFavorites} /> </div>
+      <div className="row"> <MovieList movies={favoriteMovie} handleClick={removeFavorites} favoriteMovie={RemoveFavorites} /> </div>
     </div>
   );
 }
