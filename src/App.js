@@ -15,7 +15,7 @@ function App() {
 
   //Fetch data once the page is loaded
   const getData = async (searchValue) => {
-    const url =`http://www.omdbapi.com/?s=${searchValue}&apikey=386a7963`;
+    const url =`https://www.omdbapi.com/?s=${searchValue}&apikey=386a7963`;
 
     const requestData = await fetch(url);
     const jsonData = await requestData.json();
